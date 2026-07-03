@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library Management System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      
+      <!-- Top Header & Live Stats Dashboard -->
+      <header id="appHeader">
+        <div class="brand">
+          <div class="brand-icon">
+            <i data-lucide="library" style="width: 28px; height: 28px;"></i>
+          </div>
+          <div>
+            <h1>Library Management</h1>
+            <p>Beginner-friendly book inventory & storage tracker</p>
+          </div>
+        </div>
+        
+        <!-- Live Counters -->
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card" id="statCardTotal">
+            <div class="stat-icon total">
+              <i data-lucide="book-open" style="width: 20px; height: 20px;"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Total Books</h3>
+              <p id="totalBooksCount">0</p>
+            </div>
+          </div>
+          
+          <div class="stat-card" id="statCardAvailable">
+            <div class="stat-icon available">
+              <i data-lucide="check" style="width: 20px; height: 20px;"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Available</h3>
+              <p id="availableBooksCount">0</p>
+            </div>
+          </div>
+          
+          <div class="stat-card" id="statCardBorrowed">
+            <div class="stat-icon borrowed">
+              <i data-lucide="bookmark" style="width: 20px; height: 20px;"></i>
+            </div>
+            <div class="stat-info">
+              <h3>Borrowed</h3>
+              <p id="borrowedBooksCount">0</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Dashboard Grid -->
+      <main class="dashboard-grid" id="dashboardMain">
+        
+        <!-- Column 1: Add / Edit Book Form Card -->
+        <section class="card form-card" id="formCard">
+          <h2 class="card-title" id="formTitle">
+            <i data-lucide="plus-circle" style="width: 20px; height: 20px;"></i>
+            Add New Book
+          </h2>
+          
+          <form id="bookForm" novalidate>
+            <!-- Book ID field -->
+            <div class="form-group" id="formGroupBookId">
+              <label for="bookId">Book ID / Accession No.</label>
+              <input 
+                type="text" 
+                id="bookId" 
+                class="form-control" 
+                placeholder="e.g. B104" 
+                autocomplete="off"
+              />
+              <span class="error-message" id="errorBookId"></span>
+            </div>
+
+            <!-- Title field -->
+            <div class="form-group" id="formGroupBookTitle">
+              <label for="bookTitle">Book Title</label>
+              <input 
+                type="text" 
+                id="bookTitle" 
+                class="form-control" 
+                placeholder="e.g. The Catcher in the Rye" 
+                autocomplete="off"
+              />
+              <span class="error-message" id="errorBookTitle"></span>
+            </div>
+
+            <!-- Author field -->
+            <div class="form-group" id="formGroupBookAuthor">
+              <label for="bookAuthor">Author Name</label>
+              <input 
+                type="text" 
+                id="bookAuthor" 
+                class="form-control" 
+                placeholder="e.g. J.D. Salinger" 
+                autocomplete="off"
+              />
+              <span class="error-message" id="errorBookAuthor"></span>
+            </div>
+
+            <!-- Status and Category Row in Single Row Group -->
+            <div class="form-row">
+              <!-- Status Choice (Interactive Segments) -->
+              <div class="form-group" id="formGroupBookStatus">
+                <label>Status</label>
+                <!-- Hidden input bound to status-selector -->
+                <input type="hidden" id="bookStatus" value="available" />
+                <div class="status-selector">
+                  <div class="status-option active" data-status="available" id="statusOptAvailable">Available</div>
+                  <div class="status-option" data-status="borrowed" id="statusOptBorrowed">Borrowed</div>
+                </div>
+              </div>
+
+              <!-- Category Dropdown -->
+              <div class="form-group" id="formGroupBookCategory">
+                <label for="bookCategory">Category</label>
+                <select id="bookCategory" class="form-control">
+                  <option value="Fiction">Fiction</option>
+                  <option value="Non-Fiction">Non-Fiction</option>
+                  <option value="Sci-Fi / Fantasy">Sci-Fi / Fantasy</option>
+                  <option value="Biography">Biography</option>
+                  <option value="History">History</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Mystery / Thriller">Mystery / Thriller</option>
+                  <option value="Kids">Kids</option>
+                  <option value="Other">Other</option>
+                </select>
+                <span class="error-message" id="errorBookCategory"></span>
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="btn-group" id="formButtonGroup">
+              <button type="submit" class="btn btn-primary" id="formSubmitBtn">
+                <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                Add Book
+              </button>
+              <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display: none;">
+                Cancel Edit
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Column 2: Inventory List Grid & Controls -->
+        <section class="card inventory-card" id="inventoryCard">
+          
+          <!-- Filter and Search controls bar -->
+          <div class="inventory-controls" id="inventoryControls">
+            <div class="search-wrapper" id="searchWrapper">
+              <i data-lucide="search" class="search-icon" style="width: 16px; height: 16px;"></i>
+              <input 
+                type="text" 
+                id="searchInput" 
+                class="form-control search-input" 
+                placeholder="Search by title, author, or ID..." 
+                autocomplete="off"
+              />
+            </div>
+            
+            <div class="filter-tabs" id="filterTabs">
+              <button class="filter-tab active" data-filter="all" id="filterTabAll">All</button>
+              <button class="filter-tab" data-filter="available" id="filterTabAvailable">Available</button>
+              <button class="filter-tab" data-filter="borrowed" id="filterTabBorrowed">Borrowed</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Shelf Content -->
+          <div class="table-responsive" id="booksTableWrapper" style="display: none;">
+            <table class="books-table" id="booksTable">
+              <thead>
+                <tr>
+                  <th style="width: 15%;">Book ID</th>
+                  <th style="width: 40%;">Book Details</th>
+                  <th style="width: 15%;">Category</th>
+                  <th style="width: 15%;">Status</th>
+                  <th style="width: 15%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="booksTableBody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State (No books match criteria) -->
+          <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon" id="emptyIcon">
+              <i data-lucide="book-x" style="width: 48px; height: 48px;"></i>
+            </div>
+            <h3>No books found</h3>
+            <p>Your library is currently empty. Get started by inserting a new book record!</p>
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confirm Delete Modal Backdrop overlay -->
+    <div class="modal-overlay" id="confirmDeleteModal">
+      <div class="modal">
+        <div class="modal-header">
+          <i data-lucide="alert-triangle" class="modal-icon" style="width: 24px; height: 24px;"></i>
+          <h3 class="modal-title">Confirm Deletion</h3>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this book record? This action is permanent.
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+          <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core App Engine JavaScript -->
+    <script src="./script.js" defer></script>
+  </body>
+</html>
+
